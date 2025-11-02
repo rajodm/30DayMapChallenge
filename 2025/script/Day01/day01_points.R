@@ -5,6 +5,8 @@ library(duckdb)
 library(duckplyr)
 library(duckspatial)
 
+source(here::here("2025/script/Day01", "hf_classification.R"))
+
 font_text <- "Outfit"
 color_white <- "#fef5ed"
 color_white2 <- "#d4c5b9"
@@ -12,17 +14,17 @@ color_bg <- "#2d2424"
 color_cap <- "#a89b91"
 
 hf_levels <- c(
-  "Maternal & Child Health",
   "Referral Hospital",
   "District Hospital",
   "Hospital (Other)",
+  "Maternal & Child Health",
   "Primary Care"
 )
 
 pal <- c(
   "Referral Hospital" = "#FF9D9A",
   "District Hospital" = "#9467BD",
-  "Hospital (Other)" = "#AAAA00",
+  "Hospital (Other)" = "#ffd93d",
   "Maternal & Child Health" = "#E73F74",
   "Primary Care" = "#99DDFF"
 )
@@ -30,15 +32,15 @@ pal <- c(
 size <- c(
   "Referral Hospital" = .18,
   "District Hospital" = .16,
-  "Hospital (Other)" = .18,
-  "Maternal & Child Health" = .2,
+  "Hospital (Other)" = .16,
+  "Maternal & Child Health" = .12,
   "Primary Care" = .08
 )
 
 alpha <- c(
   "Referral Hospital" = 1,
   "District Hospital" = .8,
-  "Hospital (Other)" = .85,
+  "Hospital (Other)" = .8,
   "Maternal & Child Health" = 1,
   "Primary Care" = .4
 )
@@ -47,81 +49,26 @@ alpha <- c(
 drv <- duckdb(here::here("2025/data", "30DMC25.db"))
 con <- dbConnect(drv)
 
-# The `spatial` extension is required (error)
-# but the table was added to the db anyway when I used `ddbs_write_vector()`
-# and I was prompt to add the `overwrite = TRUE` arg
-# dbExecute(con, "install spatial")
-dbExecute(con, "load spatial")
+duckspatial::ddbs_load(con)
 
-# ddbs_write_vector(con, ssa_hf, "ssa_hf_22", overwrite = TRUE)
-
-classify_facility <- function(facility_type, facility_name = NA) {
-  facility_type <- str_to_lower(facility_type)
-  facility_name <- str_to_lower(facility_name)
-
-  # Combine type and name for better matching
-  combined <- paste(facility_type, facility_name, sep = " ")
-
+classify_facility <- function(facility_type, facility_name) {
   case_when(
-    str_detect(
-      combined,
-      "\\bpost[eo]?\\b|dispensa.?r|hut|community-based"
-    ) ~ "Health Post/Dispensary",
-
-    str_detect(
-      combined,
-      "health cent|centr[eo] de s[aú]|centro de saúde|centre m.d.+|clini|primary|medical cent.."
-    ) ~ "Health Centre/Clinic",
-
-    str_detect(
-      combined,
-      "matern|child|[ie]nfant.+|mch\\b|pmtct|antenatal|m.re"
-    ) ~ "Maternal & Child Health",
-
-    str_detect(
-      combined,
-      "sub-district|district|level 1|zonal|municipal|pr[eé]fect|distrital|rural hospital|community\\b"
-    ) ~ "District Hospital",
-
-    str_detect(
-      combined,
-      "national|university|teaching|tertiary|universitaire|chu\\b|referral|general|geral|referral|level [2-3]|tertiare|state|hospital central|central hospital|county"
-    ) ~ "Tertiary/National Hospital",
-
-    str_detect(
-      combined,
-      "provincial?|r[eé]gional"
-    ) ~ "Regional/Provincial Hospital",
-
-    str_detect(
-      combined,
-      "h[oô][sş]pita"
-    ) ~ "Hospital (Other)",
-
-    TRUE ~ "Other Primary Care"
+    facility_type %in%
+      mch |
+      str_detect(
+        facility_name,
+        "Hôpital Des Enfants|Pédiatrie|Hospitalier Mère-Enfant|Maternal and Child Health|Children Hospital"
+      ) ~ "Maternal & Child Health",
+    facility_type %in% h_ref ~ "Referral Hospital",
+    facility_type %in% h_dist ~ "District Hospital",
+    facility_type %in% h_other ~ "Hospital (Other)",
+    TRUE ~ "Primary Care"
   )
 }
 
 ssa_hf <- duckspatial::ddbs_read_vector(con, "ssa_hf_22") |>
   mutate(
     facility_c = classify_facility(facility_t, facility_n),
-    facility_c = case_when(
-      facility_c %in%
-        c(
-          "Tertiary/National Hospital",
-          "Regional/Provincial Hospital"
-        ) ~ "Referral Hospital",
-      facility_c == "District Hospital" ~ "District Hospital",
-      facility_c == "Hospital (Other)" ~ "Hospital (Other)",
-      facility_c == "Maternal & Child Health" ~ "Maternal & Child Health",
-      facility_c %in%
-        c(
-          "Health Centre/Clinic",
-          "Health Post/Dispensary",
-          "Other Primary Care"
-        ) ~ "Primary Care",
-      TRUE ~ "Other"
-    ),
     facility_c = fct_rev(factor(facility_c, levels = hf_levels))
   ) |>
   arrange(facility_c)
