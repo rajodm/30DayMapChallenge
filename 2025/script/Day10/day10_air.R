@@ -16,12 +16,12 @@ library(systemfonts)
 
 # Load Data ------------------------------------------------------
 
-wind_data <- terra::rast(here::here(
-  "tana",
-  "data_stream-oper_stepType-instant.nc"
-)) |>
-  terra::project("EPSG:4326")
-
+# The data has been downloaded manualy
+# wind_data <- terra::rast(here::here(
+#   "tana",
+#   "data_stream-oper_stepType-instant.nc"
+# )) |>
+#   terra::project("EPSG:4326")
 
 wind_data
 world <- ne_countries(50) |>
