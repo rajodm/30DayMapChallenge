@@ -101,7 +101,7 @@ map <- wind_speed |>
   geom_sf(
     data = world,
     fill = NA,
-    color = "#e0e0e0",
+    color = "#c0c0c0",
     linewidth = .2,
   ) +
   geom_streamline(
