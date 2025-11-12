@@ -16,14 +16,13 @@ library(systemfonts)
 
 # Load Data ------------------------------------------------------
 
-# The data has been downloaded manualy
+# Data has been downloaded manually from the C3S, ECMWF website
 # wind_data <- terra::rast(here::here(
 #   "tana",
 #   "data_stream-oper_stepType-instant.nc"
 # )) |>
 #   terra::project("EPSG:4326")
 
-wind_data
 world <- ne_countries(50) |>
   st_transform(crs = "EPSG:4326")
 
@@ -48,7 +47,7 @@ chart <- glue::glue(
 )
 
 bsky <- glue::glue("<span style='font-family:fa7-brands'>&#xe671;</span>")
-author <- glue::glue("**Graphic**: {bsky} @rajodm")
+author <- glue::glue("Visualization: {bsky} @rajodm")
 caption_text <- glue::glue("{src}<br>{chart} | {author} | #rstats")
 
 # Helper function -----------------------------------------------
@@ -89,8 +88,6 @@ wind_speed <-
     speed = sqrt(u**2 + v**2)
   )
 
-wind_speed
-
 breaks <- classInt::classIntervals(
   wind_speed$speed,
   n = 6,
@@ -104,8 +101,8 @@ map <- wind_speed |>
   geom_sf(
     data = world,
     fill = NA,
-    color = "#d9d9d9",
-    linewidth = .3,
+    color = "#e0e0e0",
+    linewidth = .2,
   ) +
   geom_streamline(
     aes(
@@ -113,9 +110,9 @@ map <- wind_speed |>
       y = lat,
       dx = u,
       dy = v,
-      color = after_stat(dx**2 + dy**2),
-      alpha = after_stat(dx**2 + dy**2),
-      linewidth = after_stat(dx**2 + dy**2)
+      color = after_stat(sqrt(dx**2 + dy**2)),
+      alpha = after_stat(sqrt(dx**2 + dy**2)),
+      linewidth = after_stat(sqrt(dx**2 + dy**2))
     ),
     lineend = "round",
     L = 2,
@@ -136,7 +133,7 @@ map <- wind_speed |>
     range = c(.2, 1),
   ) +
   scale_linewidth(
-    range = c(.2, .6),
+    range = c(.1, .5),
   ) +
   coord_sf(
     crs = 4326,
