@@ -35,7 +35,7 @@ author <- glue::glue("Visualization: {bsky} @rajodm")
 
 caption_text <- glue::glue(
   "{title}<br>",
-  "{subtitle}<br><span style ='font-family: Outfit; font-size:6pt; color: #4a4a4a'>",
+  "{subtitle}<br><span style ='font-family: Lato; font-size:6pt; color: #4a4a4a'>",
   "{src}<br>{chart} | {author} | #rstats | #rayshader</span>"
 )
 
