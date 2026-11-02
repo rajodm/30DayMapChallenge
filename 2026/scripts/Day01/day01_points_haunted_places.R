@@ -121,7 +121,7 @@ map <- ggplot2::ggplot() +
     data = p_dat_grid,
     ggplot2::aes(x, y, group = place, label = place, description = desc),
     position = ggplot2::position_nudge(y = 0),
-    label.buffer = unit(18, "mm"),
+    label.buffer = unit(20, "mm"),
     label.family = c("Schibsted Grotesk", "Atkinson Hyperlegible Next"),
     label.fontsize = 11,
     label.fill = col_ink,
@@ -130,13 +130,12 @@ map <- ggplot2::ggplot() +
     con.type = "straight",
     radius = 0,
     expand = 0,
-    con.cap = unit(2, "mm"),
-    alpha = 0.6
+    con.cap = 0
   ) +
   ggplot2::labs(
     title = "**Reportedly {.hg Haunted Locations} in Latvia**",
     caption = "**Source**: Wikipedia - List of reportedly haunted locations, Latvia\\
-    **Base map**: Natural Hearth via {rnaturalhearth} R package | **Projection**: EPSG3035\\
+    **Base map**: Natural Earth via {rnaturalearth} R package | **Projection**: EPSG:3035\\
     **#30DayMapChallenge 2026**: Day 1 - points | **Visualisation**: Andriambelo Rajo | #rstats"
   ) +
   ggplot2::coord_sf(
@@ -169,7 +168,7 @@ map <- ggplot2::ggplot() +
   )
 
 ggh4x::save_plot(
-  "dat01_points_haunted_places.png",
+  here::here("2026/maps/day01_points_haunted_places.png"),
   plot = map,
   width = 25,
   height = 21,
