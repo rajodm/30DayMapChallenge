@@ -102,7 +102,7 @@ map <- ggplot() +
   ) +
   theme_void(
     base_family = "Atkinson Hyperlegible Next",
-    base_size = 12,
+    base_size = 11,
     paper = col_paper,
     ink = col_ink
   ) +
@@ -110,13 +110,13 @@ map <- ggplot() +
     title.position = "plot",
     title = marquee::element_marquee(
       family = "SG semibold",
-      size = rel(1.8),
+      size = rel(2.48),
       style = stl,
       margin = margin(0, 0, 16, 0)
     ),
     caption.position = "plot",
     caption = marquee::element_marquee(
-      size = rel(0.7),
+      size = rel(0.62),
       width = 1,
       hjust = 0,
       style = stl,
@@ -125,12 +125,14 @@ map <- ggplot() +
     margin = margin(25, 25, 10, 25)
   ) +
   theme_sub_legend(
-    title = element_text("SG semibold", size = rel(1.05)),
+    title = element_text("SG semibold", size = rel(1.23)),
     text = element_text(size = rel(1)),
     position = "inside",
-    position.inside = c(0.9, 0.9)
+    position.inside = c(0.85, 0.85)
   )
 
+map +
+  ggview::canvas(21, 21, "cm", 600, bg = col_paper)
 ggh4x::save_plot(
   here::here("2026/maps", "day02_lines-roman_empire_roads.png"),
   plot = map,
