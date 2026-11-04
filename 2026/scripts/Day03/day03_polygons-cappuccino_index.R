@@ -69,7 +69,7 @@ systemfonts::register_variant(
 )
 
 # Texts
-title_text <- "**How long a barista would need to work to pay for a small cappuchino ?**"
+title_text <- "**How long a barista would need to work to pay for a small cappuccino ?**"
 subtitle_text <- "The **cappuccino index** indicates the **time in minutes a barista needs to work** to afford a small cappuccino in their country: **the darker the color, the longer the time**."
 caption_text <- create_caption(
   source = "The 2026 Cappuccino Index, via **TidyTuesday** 2026 Week 36",
