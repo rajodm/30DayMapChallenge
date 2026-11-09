@@ -122,7 +122,7 @@ map <-
     color = col_lighter_blue,
     fill = col_blue,
     alpha = 0.6,
-    linewidth = 0.15,
+    linewidth = 0.15
   ) +
   geom_sf(
     data = roads,
@@ -165,7 +165,7 @@ map <-
     label.family = "Atkinson Hyperlegible Next",
     label.fontsize = 9,
     stat = "sf_coordinates",
-    con.cap = 0,
+    con.cap = 0
   ) +
   scale_linewidth_manual(
     values = c(
