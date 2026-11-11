@@ -58,6 +58,8 @@ bb_proj <-
 
 # Miscs ------------------------------------------------------------------
 
+systemfonts::require_font("Newsreader 24pt")
+systemfonts::require_font("Newsreader 36pt")
 systemfonts::register_variant(
   "nw_title",
   "Newsreader 36pt",
