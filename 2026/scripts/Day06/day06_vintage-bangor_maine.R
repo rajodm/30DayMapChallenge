@@ -91,39 +91,45 @@ highway_w <- c(
 # Map --------------------------------------------------------------------
 
 map <-
-  tmap::tm_shape(river, bbox = bb) +
+  # Rivers
+  tmap::tm_shape(river, bbox = bb_proj) +
   tmap::tm_polygons(fill = col_blue, col = col_blue_borders, lwd = 0.5) +
-  tmap::tm_shape(p_streets_main, bbox = bb) +
-  tmap::tm_lines(
-    lwd = "highway",
-    lwd.scale = tmap::tm_scale(values = highway_w * 1.62),
-    col = "#2b2723",
-    lwd.legend = tmap::tm_legend_hide()
-  ) +
-  tmap::tm_shape(p_streets_main, bbox = bb) +
-  tmap::tm_lines(
-    lwd = "highway",
-    lwd.scale = tmap::tm_scale(values = highway_w),
-    col = col_gray,
-    lwd.legend = tmap::tm_legend_hide()
-  ) +
-  tmap::tm_shape(p_streets_min, bbox = bb) +
+  # Smaller roads
+  tmap::tm_shape(p_streets_min, bbox = bb_proj) +
   tmap::tm_lines(
     lwd = 0.4,
     lty = "42",
     col = col_gray,
     lwd.legend = tmap::tm_legend_hide()
   ) +
+  # Main roads (dark)
+  tmap::tm_shape(p_streets_main, bbox = bb_proj) +
+  tmap::tm_lines(
+    lwd = "highway",
+    lwd.scale = tmap::tm_scale(values = highway_w * 1.62),
+    col = col_ink,
+    lwd.legend = tmap::tm_legend_hide()
+  ) +
+  # Main roads (light)
+  tmap::tm_shape(p_streets_main, bbox = bb_proj) +
+  tmap::tm_lines(
+    lwd = "highway",
+    lwd.scale = tmap::tm_scale(values = highway_w),
+    col = col_gray,
+    lwd.legend = tmap::tm_legend_hide()
+  ) +
+  # Primary highways
   tmap::tm_shape(
     p_streets |>
       filter(highway == "primary"),
-    bbox = bb
+    bbox = bb_proj
   ) +
   tmap::tm_lines(
     lwd = 1.6,
     col = col_red
   ) +
-  tmap::tm_shape(building_p, bbox = bb) +
+  # Buildings
+  tmap::tm_shape(building_p, bbox = bb_proj) +
   tmap::tm_polygons(
     fill = col_pink,
     col = col_pink_borders,
@@ -166,20 +172,19 @@ map <-
   ) +
   tmap::tm_credits(
     glue::glue(
-      "Data: OpenStreetMap contributors, ODbL\n",
+      "Data: OpenStreetMap contributors, ODbL | ",
       "#30DayMapChallenge 2026: Day 6 - Vintage | Visualization: Andriambelo Rajo | #rstats"
     ),
     size = 0.3,
     color = col_ink,
-    position = tmap::tm_pos_out("center", "bottom", "left", "top"),
+    position = tmap::tm_pos_in("center", "bottom", "center"),
     padding = c(0, 0, 0, 0)
   ) +
   tmap::tm_layout(
     text.fontfamily = "Newsreader 24pt",
     frame.lwd = 0.7,
-    asp = 0,
-    outer.margins = c(0, 0.02, 0.02, 0.02),
-    inner.margins = rep(0.01, 4),
+    outer.margins = rep(0.02, 4),
+    inner.margins = 0,
     frame.double_line = TRUE,
     frame.r = 0,
     bg.color = col_paper,
@@ -187,7 +192,7 @@ map <-
     scale = 2.3
   )
 
-asp <- tmaptools::get_asp_ratio(map)
+asp <- tmaptools::get_asp_ratio(map, TRUE)
 w <- 25
 h <- w / asp
 
